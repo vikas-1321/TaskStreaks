@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "TaskStreaks",
+    "slug": "taskstreaks",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo.png",
+    "userInterfaceStyle": "light",
+    "jsEngine": "hermes",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "package": "com.vikasc.taskstreaks"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "apiUrl": "",
+      "eas": {
+        "projectId": "8abcb658-9f43-46ca-8f5e-c4f9401b199c"
+      }
+    }
+  }
+}
