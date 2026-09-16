@@ -1,5 +1,7 @@
+import { getTasksForDay } from './streakUtils';
+
 export const getDailyProgress = (tasks, settings, todayKey) => {
-  const todayTasks = tasks.filter((task) => task.date === todayKey);
+  const todayTasks = getTasksForDay(tasks, todayKey);
   const completedToday = todayTasks.filter((task) => task.completed).length;
   const dailyTaskTarget = Math.max(1, Number(settings?.dailyTaskTarget) || 1);
   const completionTarget = Math.min(100, Math.max(10, Number(settings?.completionPercentage) || 75));

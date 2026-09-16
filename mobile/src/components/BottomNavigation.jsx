@@ -1,10 +1,10 @@
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useThemeStyles } from '../theme/ThemeContext';
 
 const tabs = [
-  { key: 'home', label: 'Today', icon: '⌂' },
-  { key: 'work', label: 'Daily work', icon: '✓' },
-  { key: 'goals', label: 'Goals', icon: '◈' },
+  { key: 'home', label: 'Studio', icon: '✏️' },
+  { key: 'work', label: 'Routines', icon: '📓' },
+  { key: 'goals', label: 'Vision', icon: '🎯' },
 ];
 
 export default function BottomNavigation({ activeTab, onChange }) {
@@ -20,11 +20,28 @@ export default function BottomNavigation({ activeTab, onChange }) {
               key={tab.key}
               accessibilityRole="tab"
               accessibilityState={{ selected: isActive }}
-              style={[styles.bottomNavItem, isActive && styles.bottomNavItemActive]}
+              style={[
+                styles.bottomNavItem,
+                isActive && styles.bottomNavItemActive,
+              ]}
               onPress={() => onChange(tab.key)}
             >
-              <Text style={[styles.bottomNavIcon, isActive && styles.bottomNavIconActive]}>{tab.icon}</Text>
-              <Text style={[styles.bottomNavLabel, isActive && styles.bottomNavLabelActive]}>{tab.label}</Text>
+              <Text
+                style={[
+                  styles.bottomNavIcon,
+                  isActive && styles.bottomNavIconActive,
+                ]}
+              >
+                {tab.icon}
+              </Text>
+              <Text
+                style={[
+                  styles.bottomNavLabel,
+                  isActive && styles.bottomNavLabelActive,
+                ]}
+              >
+                {tab.label}
+              </Text>
             </Pressable>
           );
         })}

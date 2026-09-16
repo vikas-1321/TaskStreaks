@@ -21,8 +21,41 @@ export function formatDisplayDate(dateKey) {
   }).format(date);
 }
 
+export function isTaskActiveOnDate(task, dateKey) {
+  // If task was created on this date, it is active
+  if (task.date === dateKey) {
+    return true;
+  }
+
+  // Specific goal tasks have a longer lifetime (persists across days until completed, up to 30 days)
+  if (task.goalId) {
+    // If completed on this specific date
+    if (task.completedAt?.startsWith(dateKey)) {
+      return true;
+    }
+    // If incomplete and created on or before this date, it remains active!
+    if (!task.completed && task.date <= dateKey) {
+      const createdTime = new Date(`${task.date}T00:00:00`).getTime();
+      const targetTime = new Date(`${dateKey}T00:00:00`).getTime();
+      const diffDays = Math.floor((targetTime - createdTime) / (1000 * 60 * 60 * 24));
+      return diffDays >= 0 && diffDays <= 30; // 30-day window for long-term goal tasks
+    }
+  }
+
+  // Daily tasks (no goal) strictly have a 1-day lifetime for their creation date
+  return false;
+}
+
 export function getTasksForDay(tasks, dateKey) {
-  return tasks.filter((task) => task.date === dateKey);
+  return tasks.filter((task) => isTaskActiveOnDate(task, dateKey));
+}
+
+export function getTaskDaysActive(task, todayKey = formatDateKey(new Date())) {
+  if (!task.date) return 1;
+  const createdTime = new Date(`${task.date}T00:00:00`).getTime();
+  const todayTime = new Date(`${todayKey}T00:00:00`).getTime();
+  const diffDays = Math.max(1, Math.floor((todayTime - createdTime) / (1000 * 60 * 60 * 24)) + 1);
+  return diffDays;
 }
 
 export function getDayStatus(tasksForDay, settings = defaultSettings) {

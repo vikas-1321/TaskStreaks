@@ -4,9 +4,26 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>taskstreaks</title>
+    <title>TaskStreaks ✏️ Hand-Drawn Habit Tracker</title>
+    <!-- Hand-Drawn Sketch Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&family=Shantell+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   </head>
   <body>
+    <!-- Hidden SVG sketch filter for rough pencil stroke edges -->
+    <svg style="position: absolute; width: 0; height: 0; pointer-events: none;" aria-hidden="true">
+      <defs>
+        <filter id="sketch-filter">
+          <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.8" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+        <filter id="pencil-stroke">
+          <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="rough" />
+          <feDisplacementMap in="SourceGraphic" in2="rough" scale="2" />
+        </filter>
+      </defs>
+    </svg>
     <div id="app"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

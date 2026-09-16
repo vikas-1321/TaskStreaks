@@ -97,14 +97,37 @@ export function useTaskStreakData() {
     writeToApi(data).catch(() => {});
   }, [data, isHydrated]);
 
-  const addTask = (title, date, goalId) => setData((current) => ({
-    ...current,
-    tasks: [...current.tasks, { id: createId(), title, date, goalId: goalId || null, completed: false }],
-  }));
+  const addTask = (title, date, goalId) => {
+    const isGoal = Boolean(goalId);
+    return setData((current) => ({
+      ...current,
+      tasks: [
+        ...current.tasks,
+        {
+          id: createId(),
+          title,
+          date,
+          goalId: goalId || null,
+          lifetime: isGoal ? 'long-term' : 'daily',
+          completed: false,
+          createdAt: new Date().toISOString(),
+          completedAt: null,
+        },
+      ],
+    }));
+  };
 
   const toggleTask = (taskId) => setData((current) => ({
     ...current,
-    tasks: current.tasks.map((task) => task.id === taskId ? { ...task, completed: !task.completed } : task),
+    tasks: current.tasks.map((task) => {
+      if (task.id !== taskId) return task;
+      const nextCompleted = !task.completed;
+      return {
+        ...task,
+        completed: nextCompleted,
+        completedAt: nextCompleted ? new Date().toISOString() : null,
+      };
+    }),
   }));
 
   const deleteTask = (taskId) => setData((current) => ({

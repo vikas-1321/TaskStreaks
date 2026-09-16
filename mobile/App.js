@@ -6,12 +6,12 @@ import BottomNavigation from './src/components/BottomNavigation';
 import DailyWorkBoard from './src/components/DailyWorkBoard';
 import GoalsPanel from './src/components/GoalsPanel';
 import HomeScreen from './src/components/HomeScreen';
+import { SpiralHeader } from './src/components/SketchElements';
 import TaskModal from './src/components/TaskModal';
 import { useTaskStreakData } from './src/hooks/useTaskStreakData';
 import { ThemeProvider, useThemeStyles } from './src/theme/ThemeContext';
 import { formatKey, getWeek } from './src/utils/dateUtils';
 import { getDailyProgress } from './src/utils/progressUtils';
-import { styles } from './src/styles';
 
 const tabs = ['home', 'work', 'goals'];
 
@@ -42,14 +42,14 @@ function AppContent({ data, addTask, toggleTask, deleteTask, addGoal, addWork, t
     ? data.tasks.filter((task) => task.goalId === selectedGoal.id)
     : progress.todayTasks;
 
-  const handleAddTask = (title) => {
-    addTask(title, todayKey, selectedGoalId);
+  const handleAddTask = (title, goalId) => {
+    addTask(title, todayKey, goalId !== undefined ? goalId : selectedGoalId);
     setIsTaskFormOpen(false);
   };
 
   const handleSelectGoal = (goalId) => {
     setSelectedGoalId(goalId);
-    if (activeTab === 'goals') setActiveTab('home');
+    if (activeTab === 'goals') changePage('home');
   };
 
   const changePage = (tab) => {
@@ -70,39 +70,75 @@ function AppContent({ data, addTask, toggleTask, deleteTask, addGoal, addWork, t
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeArea}>
         <StatusBar style="dark" />
+
+        {/* Top Wire Spiral Binder Simulation */}
+        <SpiralHeader />
+
         <View style={styles.header}>
-          <Image source={require('./assets/logo.png')} style={{ width: 36, height: 36, borderRadius: 8, marginRight: 10 }} />
+          <Image
+            source={require('./assets/logo.png')}
+            style={{ width: 36, height: 36, borderRadius: 8, marginRight: 10, borderWidth: 1.5, borderColor: '#2b303c' }}
+          />
           <View style={styles.headerContent}>
-            <Text style={styles.eyebrow}>HABIT TRACKER</Text>
-            <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">TaskStreaks</Text>
+            <Text style={styles.eyebrow}>★ HABIT JOURNAL</Text>
+            <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+              TaskStreaks
+            </Text>
+            <View style={styles.titleMarker} />
           </View>
-          <Text style={styles.date}>{new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</Text>
+          <Text style={styles.date}>
+            📌 {new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+          </Text>
         </View>
+
         <ScrollView
           ref={pagerRef}
           horizontal
           pagingEnabled
+          scrollEnabled={false}
           showsHorizontalScrollIndicator={false}
           contentOffset={{ x: 0, y: 0 }}
           onMomentumScrollEnd={handlePageScrollEnd}
           nestedScrollEnabled
           style={styles.pagePager}
         >
-          <ScrollView style={[styles.page, { width: pageWidth }]} contentContainerStyle={styles.pageContainer} nestedScrollEnabled>
+          <ScrollView
+            style={[styles.page, { width: pageWidth }]}
+            contentContainerStyle={styles.pageContainer}
+            nestedScrollEnabled
+          >
             <HomeScreen
               progress={progress}
               goals={data.goals}
               selectedGoalId={selectedGoalId}
               visibleTasks={visibleTasks}
+              allTasks={data.tasks}
+              settings={data.settings}
               onSelectGoal={setSelectedGoalId}
               onToggleTask={toggleTask}
               onDeleteTask={deleteTask}
             />
           </ScrollView>
-          <ScrollView style={[styles.page, { width: pageWidth }]} contentContainerStyle={styles.pageContainer} nestedScrollEnabled>
-            <DailyWorkBoard workItems={data.workItems} week={week} onAdd={addWork} onToggle={toggleWork} onDelete={deleteWork} />
+
+          <ScrollView
+            style={[styles.page, { width: pageWidth }]}
+            contentContainerStyle={styles.pageContainer}
+            nestedScrollEnabled
+          >
+            <DailyWorkBoard
+              workItems={data.workItems}
+              week={week}
+              onAdd={addWork}
+              onToggle={toggleWork}
+              onDelete={deleteWork}
+            />
           </ScrollView>
-          <ScrollView style={[styles.page, { width: pageWidth }]} contentContainerStyle={styles.pageContainer} nestedScrollEnabled>
+
+          <ScrollView
+            style={[styles.page, { width: pageWidth }]}
+            contentContainerStyle={styles.pageContainer}
+            nestedScrollEnabled
+          >
             <GoalsPanel
               goals={data.goals}
               selectedGoalId={selectedGoalId}
@@ -111,12 +147,32 @@ function AppContent({ data, addTask, toggleTask, deleteTask, addGoal, addWork, t
               onSelectGoal={handleSelectGoal}
               onAddGoal={addGoal}
               onSaveRules={updateSettings}
-              onToggleTheme={(isDarkMode) => updateSettings({ theme: isDarkMode ? 'dark' : 'light' })}
+              onToggleTheme={(isDarkMode) =>
+                updateSettings({ theme: isDarkMode ? 'dark' : 'light' })
+              }
             />
           </ScrollView>
         </ScrollView>
-        {activeTab === 'home' && <Pressable style={styles.floatingButton} onPress={() => setIsTaskFormOpen(true)}><Text style={styles.floatingPlus}>+</Text></Pressable>}
-        <TaskModal visible={isTaskFormOpen} onClose={() => setIsTaskFormOpen(false)} onAdd={handleAddTask} />
+
+        {activeTab === 'home' && (
+          <Pressable
+            style={styles.floatingButton}
+            onPress={() => setIsTaskFormOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Add new task"
+          >
+            <Text style={styles.floatingPlus}>✏️</Text>
+          </Pressable>
+        )}
+
+        <TaskModal
+          visible={isTaskFormOpen}
+          goals={data.goals}
+          selectedGoalId={selectedGoalId}
+          onClose={() => setIsTaskFormOpen(false)}
+          onAdd={handleAddTask}
+        />
+
         <BottomNavigation activeTab={activeTab} onChange={changePage} />
       </SafeAreaView>
     </SafeAreaProvider>
